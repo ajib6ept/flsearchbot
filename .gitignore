@@ -102,3 +102,16 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# logs
+logs/
+
+# settings
+settings.json
+
+# sublime-text
+*.sublime-project
+*.sublime-workspace
+
+# database
+*.db
