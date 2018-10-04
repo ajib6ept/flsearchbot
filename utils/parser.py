@@ -8,20 +8,17 @@ import telegram
 
 from utils.models import FLKey, FLProject
 
-with open('settings.json') as f:
-    settings = json.load(f)
-token = settings['token']
-proxy = settings['proxy']
-
-INTERVAL = 30
-
 
 class FLParser():
 
-    def __init__(self, logger):
+    def __init__(self, settings, logger):
+        self.settings = settings
         self.logger = logger
-        pp = telegram.utils.request.Request(proxy_url=proxy)
-        self.bot = telegram.Bot(token=token, request=pp)
+
+        pp = None
+        if settings['proxy']:
+            pp = telegram.utils.request.Request(proxy_url=settings['proxy'])
+        self.bot = telegram.Bot(token=self.settings['token'], request=pp)
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -46,4 +43,4 @@ class FLParser():
                                                  text=msg)
                             self.logger.debug(
                                 'Send message "%s" to %s' % (msg, key.user))
-            time.sleep(INTERVAL)
+            time.sleep(self.settings['interval'])

@@ -8,21 +8,24 @@ from utils.models import User, FLKey
 from utils.logger import Logger
 from utils.parser import FLParser
 
-LOG_PATH = '/logs/flbot.txt'
-
 
 class FLBot():
 
-    def __init__(self, token, proxy=''):
+    def __init__(self):
+
+        # settings
+        with open('settings.json') as f:
+            self.settings = json.load(f)
 
         # add logger
         path = os.path.dirname(os.path.realpath(__file__))
-        log_file = path + LOG_PATH
+        log_file = path + self.settings['log_path']
         self.logger = Logger(log_file, 'flbot').get()
 
+        proxy = self.settings['proxy']
         kwargs = {'proxy_url': proxy} if proxy else None
 
-        self.updater = Updater(token=token,
+        self.updater = Updater(token=self.settings['token'],
                                request_kwargs=kwargs)
 
         # Add commands
@@ -37,7 +40,7 @@ class FLBot():
 
         # Start bot
         self.logger.debug('Start FLBot!')
-        self.parser = FLParser(self.logger)
+        self.parser = FLParser(settings=self.settings, logger=self.logger)
         self.updater.start_polling()
         self.updater.idle()
 
@@ -132,13 +135,5 @@ class FLBot():
         update.message.reply_text(msg)
 
 
-def main():
-    with open('settings.json') as f:
-        settings = json.load(f)
-    token = settings['token']
-    proxy = settings['proxy']
-    FLBot(token, proxy)
-
-
 if __name__ == '__main__':
-    main()
+    FLBot()
