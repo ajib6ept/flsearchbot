@@ -1,10 +1,12 @@
 
-from peewee import *
+from peewee import (SqliteDatabase, Model, IntegerField, CharField,
+                    BooleanField, ForeignKeyField)
 
 db = SqliteDatabase('fl_search_app.db')
 
 
 class BaseModel(Model):
+
     class Meta:
         database = db
 

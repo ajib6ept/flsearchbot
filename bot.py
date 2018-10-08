@@ -1,6 +1,5 @@
 import os
 import json
-import logging
 
 from telegram.ext import Updater, CommandHandler
 
@@ -55,7 +54,8 @@ class FLBot():
                         username=telegram_user.username,
                         firstname=telegram_user.first_name,
                         lastname=telegram_user.last_name)
-            msg = 'Привет, этот бот поможет быстро получать информацию о новых проектах на fl.ru'
+            msg = 'Привет, этот бот поможет быстро получать информацию ' \
+                  'о новых проектах на fl.ru'
             update.message.reply_text(msg)
         else:
             User.update(is_active=True).where(
