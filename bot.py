@@ -126,6 +126,7 @@ class FLBot():
         update.message.reply_text(msg)
 
     def help(self, bot, update):
+        telegram_user = update.message.from_user
         msg = 'Тут будет страница помощи'
         self.logger.debug('/help command form user %s' % telegram_user)
         update.message.reply_text(msg)
