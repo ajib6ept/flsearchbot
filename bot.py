@@ -49,7 +49,8 @@ class FLBot():
 
     def start(self, bot, update):
         telegram_user = update.message.from_user
-        if not User.get_or_none(telegram_id=telegram_user.id):
+        user = User.get_or_none(telegram_id=telegram_user.id)
+        if not user:
             User.create(telegram_id=telegram_user.id,
                         username=telegram_user.username,
                         firstname=telegram_user.first_name,
@@ -57,7 +58,7 @@ class FLBot():
             msg = 'Привет, этот бот поможет быстро получать информацию ' \
                   'о новых проектах на fl.ru'
             update.message.reply_text(msg)
-        else:
+        elif not user.is_active:
             User.update(is_active=True).where(
                 User.telegram_id == telegram_user.id).execute()
             msg = 'Сообщения теперь будут приходить'
