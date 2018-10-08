@@ -7,6 +7,7 @@ from telegram.ext import Updater, CommandHandler
 from utils.models import User, FLKey
 from utils.logger import Logger
 from utils.parser import FLParser
+from utils.tools import is_key_correct
 
 
 class FLBot():
@@ -69,13 +70,16 @@ class FLBot():
         return (4 > len(args[0])) and (13 > len(args[0]))
 
     def add(self, bot, update, args):
-        # TODO: add a filter for the length of the key
         if not args:
             msg = 'Нет слов для добавляния, /help для помощи'
             update.message.reply_text(msg)
             return
-        if len(args) != 1:
+        elif len(args) != 1:
             msg = 'Можно добавить только одно слово, /help для помощи'
+            update.message.reply_text(msg)
+            return
+        elif not is_key_correct(args[0]):
+            msg = 'Некорретный формат ключа, /help для помощи'
             update.message.reply_text(msg)
             return
         telegram_user = update.message.from_user
