@@ -28,7 +28,7 @@ class FLProject(BaseModel):
     project_url = CharField()
     project_title = CharField()
     project_body = CharField()
-    project_added = DateTimeField()
+    project_added = DateTimeField(default='')
 
 
 def create_tables():

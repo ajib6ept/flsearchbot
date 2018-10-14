@@ -32,12 +32,13 @@ class FLParser():
                 url = entry['link']
                 title = entry['title_detail']['value']
                 body = entry['summary']
-                cur_time = datetime.datetime.now()
                 prj, created = FLProject.get_or_create(project_url=url,
                                                        project_title=title,
-                                                       project_body=body,
-                                                       project_added=cur_time)
+                                                       project_body=body)
                 if created:
+                    cur_time = datetime.datetime.now()
+                    prj.project_added = cur_time
+                    prj.save()
                     for key in FLKey.select():
                         if (key.name.lower() in body.lower() and
                                 key.user.is_active):
