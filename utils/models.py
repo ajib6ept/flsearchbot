@@ -1,6 +1,6 @@
 
 from peewee import (SqliteDatabase, Model, IntegerField, CharField,
-                    BooleanField, ForeignKeyField)
+                    BooleanField, ForeignKeyField, DateTimeField)
 
 db = SqliteDatabase('fl_search_app.db')
 
@@ -28,6 +28,7 @@ class FLProject(BaseModel):
     project_url = CharField()
     project_title = CharField()
     project_body = CharField()
+    project_added = DateTimeField()
 
 
 def create_tables():

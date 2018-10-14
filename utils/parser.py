@@ -1,11 +1,12 @@
 
 import threading
 import time
+import datetime
 
 import feedparser
 import telegram
 
-from utils.models import FLKey, FLProject
+from .models import FLKey, FLProject
 
 
 class FLParser():
@@ -25,14 +26,17 @@ class FLParser():
 
     def run(self):
         while True:
+            self.logger.debug('Start fl parser')
             feed = feedparser.parse('https://www.fl.ru/rss/all.xml')
             for entry in feed['entries']:
                 url = entry['link']
                 title = entry['title_detail']['value']
                 body = entry['summary']
+                cur_time = datetime.datetime.now()
                 prj, created = FLProject.get_or_create(project_url=url,
                                                        project_title=title,
-                                                       project_body=body)
+                                                       project_body=body,
+                                                       project_added=cur_time)
                 if created:
                     for key in FLKey.select():
                         if (key.name.lower() in body.lower() and
