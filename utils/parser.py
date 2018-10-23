@@ -1,4 +1,4 @@
-
+import urllib.request
 import threading
 import time
 import datetime
@@ -20,6 +20,10 @@ class FLParser():
             pp = telegram.utils.request.Request(proxy_url=settings['proxy'])
         self.bot = telegram.Bot(token=self.settings['token'], request=pp)
 
+        proxy = self.settings.get('flproxy', None)
+        if proxy:
+            self.flproxy = urllib.request.ProxyHandler({"http": proxy})
+
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
         thread.start()
@@ -27,7 +31,8 @@ class FLParser():
     def run(self):
         while True:
             self.logger.debug('Start fl parser')
-            feed = feedparser.parse('https://www.fl.ru/rss/all.xml')
+            feed = feedparser.parse('https://www.fl.ru/rss/all.xml',
+                                    handlers=[self.flproxy])
             for entry in feed['entries']:
                 url = entry['link']
                 title = entry['title_detail']['value']
