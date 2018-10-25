@@ -22,7 +22,9 @@ class FLParser():
 
         proxy = self.settings.get('flproxy', None)
         if proxy:
-            self.flproxy = urllib.request.ProxyHandler({"http": proxy})
+            self.flproxy = [urllib.request.ProxyHandler({"http": proxy})]
+        else:
+            self.flproxy = None
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -32,7 +34,8 @@ class FLParser():
         while True:
             self.logger.debug('Start fl parser')
             feed = feedparser.parse('https://www.fl.ru/rss/all.xml',
-                                    handlers=[self.flproxy])
+                                    handlers=self.flproxy)
+            self.logger.debug(feed)
             for entry in feed['entries']:
                 url = entry['link']
                 title = entry['title_detail']['value']

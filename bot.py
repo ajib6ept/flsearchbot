@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 
 from telegram.ext import Updater, CommandHandler
 
@@ -67,9 +68,6 @@ class FLBot():
         self.logger.debug('/start command form user %s' % telegram_user)
         update.message.reply_text(msg)
 
-    def is_correct_len_key(self, args):
-        return (4 > len(args[0])) and (13 > len(args[0]))
-
     def add(self, bot, update, args):
         if not args:
             msg = 'Нет слов для добавляния, /help для помощи'
@@ -86,9 +84,9 @@ class FLBot():
         telegram_user = update.message.from_user
         key, created = FLKey.get_or_create(user=telegram_user.id, name=args[0])
         if created:
-            msg = 'Ключ успешно добавлен'
+            msg = 'Ключ "%s" успешно добавлен' % key.name
         else:
-            msg = 'Ключ уже был в списке'
+            msg = 'Ключ "%s" уже был в списке' % key.name
         self.logger.debug('/add "%s" command form user %s' %
                           (key, telegram_user))
         update.message.reply_text(msg)
@@ -108,7 +106,7 @@ class FLBot():
             msg = 'Ключ не найден'
         else:
             key.delete_instance()
-            msg = 'Ключ "%s" удален из поиска' % key.key
+            msg = 'Ключ "%s" удален из поиска' % key.name
         self.logger.debug('/remove "%s" command form user %s' %
                           (key, telegram_user))
         update.message.reply_text(msg)
@@ -128,7 +126,14 @@ class FLBot():
 
     def help(self, bot, update):
         telegram_user = update.message.from_user
-        msg = 'Тут будет страница помощи'
+        msg = 'Я могу уведомлять о новых проектах на fl.ru\n'
+        msg += 'Я знаю следующие команды:\n'
+        msg += '/start - запуск бота\n'
+        msg += '/add - добавить ключ для уведомлений\n'
+        msg += '/remove - удалить ключ из уведомлений\n'
+        msg += '/list - список ключей для уведомлений\n'
+        msg += '/help - помощь\n'
+        msg += '/stop - остановить отправлять уведомления\n'
         self.logger.debug('/help command form user %s' % telegram_user)
         update.message.reply_text(msg)
 
@@ -142,4 +147,5 @@ class FLBot():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     FLBot()
